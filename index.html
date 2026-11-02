@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bot Kontrol Paneli</title>
+<style>
+body {
+  background: #101827;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 25px;
+}
+.panel {
+  max-width: 450px;
+  margin: 40px auto;
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 15px;
+}
+button {
+  padding: 13px 25px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  margin: 8px;
+  cursor: pointer;
+}
+.start { background: #16a34a; }
+.stop { background: #dc2626; }
+#status { color: #facc15; }
+</style>
+</head>
+<body>
+<div class="panel">
+  <h1>🤖 Bot Kontrol Paneli</h1>
+  <h3>Bot Durumu</h3>
+  <h2 id="status">Kapalı</h2>
+  <button class="start" onclick="startBot()">Başlat</button>
+  <button class="stop" onclick="stopBot()">Durdur</button>
+  <p id="log">Henüz işlem yapılmadı.</p>
+</div>
+
+<script>
+function startBot() {
+  document.getElementById("status").innerText = "Başlatma isteği";
+  document.getElementById("log").innerText =
+    "Panel hazır. Henüz Python botuna bağlanmadı.";
+}
+function stopBot() {
+  document.getElementById("status").innerText = "Durdurma isteği";
+  document.getElementById("log").innerText =
+    "Panel hazır. Henüz Python botuna bağlanmadı.";
+}
+</script>
+</body>
+</html>
