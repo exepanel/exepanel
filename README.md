@@ -1,16 +1,275 @@
-## Hi there 👋
 
-<!--
-**exepanel/exepanel** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kick Bot Manager</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #080e19;
+  color: #eaf2ff;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+header {
+  height: 70px;
+  background: #0d1728;
+  border-bottom: 1px solid #1e3453;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+}
+.logo {
+  font-size: 21px;
+  font-weight: bold;
+  color: #45a5ff;
+}
+.logo span { color: white; }
+.status {
+  color: #43d69b;
+  font-size: 13px;
+}
+.container {
+  max-width: 1100px;
+  margin: 35px auto;
+  padding: 0 20px;
+}
+h1 {
+  font-size: 27px;
+  margin-bottom: 8px;
+}
+.subtitle {
+  color: #8ca3c2;
+  margin-bottom: 28px;
+  font-size: 14px;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+.stat, .bot, .logs {
+  background: #101d31;
+  border: 1px solid #203858;
+  border-radius: 12px;
+  padding: 20px;
+}
+.stat h2 {
+  color: #45a5ff;
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+.stat p, .muted {
+  color: #8ca3c2;
+  font-size: 13px;
+}
+.section-title {
+  margin: 25px 0 15px;
+  font-size: 19px;
+}
+.bots {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+.bot-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 17px;
+}
+.bot-name {
+  font-size: 17px;
+  font-weight: bold;
+}
+.bot-status {
+  font-size: 12px;
+  color: #8ca3c2;
+  background: #1b2b43;
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+.bot-status.running {
+  color: #43d69b;
+  background: #103b32;
+}
+.bot-actions {
+  display: flex;
+  gap: 9px;
+  margin-top: 18px;
+}
+button {
+  border: 0;
+  padding: 11px 15px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+}
+.start {
+  background: #147de0;
+  color: white;
+}
+.stop {
+  background: #25364c;
+  color: #d9e8ff;
+}
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+.add {
+  background: #147de0;
+  color: white;
+  margin-top: 17px;
+}
+.logs {
+  min-height: 100px;
+  margin-top: 15px;
+  color: #8ca3c2;
+  font-size: 13px;
+  line-height: 2;
+}
+footer {
+  text-align: center;
+  color: #627895;
+  padding: 35px 10px;
+  font-size: 12px;
+}
+@media(max-width:650px) {
+  .stats { grid-template-columns: 1fr; }
+  .bots { grid-template-columns: 1fr; }
+  .container { margin-top: 25px; }
+  h1 { font-size: 23px; }
+}
+</style>
+</head>
+<body>
 
-Here are some ideas to get you started:
+<header>
+  <div class="logo">KICK <span>BOT MANAGER</span></div>
+  <div class="status">● Panel hazır</div>
+</header>
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+<main class="container">
+  <h1>Kontrol Merkezi</h1>
+  <p class="subtitle">Python botlarını tek bir yerden yönet.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <h2 id="active">0</h2>
+      <p>Çalışan bot</p>
+    </div>
+    <div class="stat">
+      <h2 id="total">5</h2>
+      <p>Bot kapasitesi</p>
+    </div>
+    <div class="stat">
+      <h2 id="stopped">5</h2>
+      <p>Kapalı bot</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">Botlarım</h2>
+  <div class="bots" id="bots"></div>
+
+  <h2 class="section-title">İşlem Kayıtları</h2>
+  <div class="logs" id="logs">
+    Henüz işlem yapılmadı.
+  </div>
+
+  <footer>
+    Kick Bot Manager © 2026
+    <br>Personal Bot Control Panel
+  </footer>
+</main>
+
+<script>
+const bots = Array.from({length:5}, (_,i)=>({
+  id:i+1,
+  name:"Bot "+(i+1),
+  file:"bot"+(i+1)+".py",
+  running:false
+}));
+
+function log(message) {
+  const box=document.getElementById("logs");
+  if(box.textContent==="Henüz işlem yapılmadı.") box.innerHTML="";
+  const line=document.createElement("div");
+  line.textContent=new Date().toLocaleTimeString("tr-TR")+" - "+message;
+  box.prepend(line);
+}
+
+function render() {
+  const container=document.getElementById("bots");
+  container.innerHTML="";
+
+  bots.forEach(bot=>{
+    const card=document.createElement("div");
+    card.className="bot";
+
+    const top=document.createElement("div");
+    top.className="bot-top";
+
+    const name=document.createElement("div");
+    name.className="bot-name";
+    name.textContent=bot.name;
+
+    const status=document.createElement("span");
+    status.className="bot-status"+(bot.running?" running":"");
+    status.textContent=bot.running?"Çalışıyor":"Kapalı";
+
+    top.append(name,status);
+
+    const file=document.createElement("p");
+    file.className="muted";
+    file.textContent=bot.file;
+
+    const actions=document.createElement("div");
+    actions.className="bot-actions";
+
+    const start=document.createElement("button");
+    start.className="start";
+    start.textContent="Başlat";
+    start.disabled=bot.running;
+    start.onclick=()=>toggleBot(bot.id,true);
+
+    const stop=document.createElement("button");
+    stop.className="stop";
+    stop.textContent="Durdur";
+    stop.disabled=!bot.running;
+    stop.onclick=()=>toggleBot(bot.id,false);
+
+    actions.append(start,stop);
+    card.append(top,file,actions);
+    container.append(card);
+  });
+
+  const active=bots.filter(b=>b.running).length;
+  document.getElementById("active").textContent=active;
+  document.getElementById("stopped").textContent=5-active;
+  document.getElementById("total").textContent=5;
+}
+
+function toggleBot(id,state) {
+  const bot=bots.find(b=>b.id===id);
+  if(!bot) return;
+
+  bot.running=state;
+  log(bot.name+(state?" için başlatma isteği oluşturuldu.":" için durdurma isteği oluşturuldu."));
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
+
